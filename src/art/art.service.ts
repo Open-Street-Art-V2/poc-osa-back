@@ -1,42 +1,43 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, TypeORMError } from 'typeorm';
-import { CreateArtDto } from './dto/create-art.dto';
 import { UpdateArtDto } from './dto/update-art.dto';
-import { Art } from  './entities/art.entity'
+import { ArtRepository } from './art.repository';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateArtDto } from './dto/create-art.dto';
+import { Art } from  './art.entity'
 
 @Injectable()
 export class ArtService {
-  constructor(
-    @InjectRepository(Art)
-    private artRepo: Repository<Art> 
-    ){}
+  constructor( @InjectRepository(ArtRepository) private artRepository: ArtRepository){}
 
-  create(createArtDto: CreateArtDto) : Object {
-    let art: Art = new Art();
-    art.artist = createArtDto.artist;
-    art.title = createArtDto.title;
-    art.latitude = createArtDto.geolocation.latitude;
-    art.longitude = createArtDto.geolocation.longitude;
-    this.artRepo.insert(art).catch((error : TypeORMError) => {
-      console.log("ERROR : " + error.message);
-    });
-    return {status: "success", data: art };
+  public async createArt(createArtDto: CreateArtDto) : Promise<Art> {
+
+    return await this.artRepository.createArt(createArtDto);
   }
 
-  findAll() {
-    return `This action returns all art`;
+  public async getArts() : Promise<Art[]> {
+    return await this.artRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} art`;
+  public async getArt(artId : number): Promise<Art>{
+    
+    const findArt= await this.artRepository.findOne(artId);
+    if(!findArt){
+      throw new NotFoundException("Art not found");
+    }
+    return findArt;
   }
 
-  update(id: number, updateArtDto: UpdateArtDto) {
-    return `This action updates a #${id} art`;
+  public async editArt(artId: number, updateArtDto: UpdateArtDto) : Promise<Art> {
+
+    const editedArt= await this.artRepository.findOne(artId);
+    if(!editedArt){
+      throw new NotFoundException("Art not found");
+    }
+
+    return this.artRepository.editArt(updateArtDto,editedArt);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} art`;
+  public async deleteArt(artId: number) : Promise<void> {
+    await this.artRepository.delete(artId);
   }
 }

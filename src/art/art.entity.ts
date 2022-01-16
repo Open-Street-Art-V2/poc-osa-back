@@ -1,8 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm"
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm"
 
 @Entity()
 @Unique(["title"])
-export class Art {
+export class Art extends BaseEntity{
     @PrimaryGeneratedColumn()
     public id: Number;
 

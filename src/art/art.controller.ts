@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Art } from './art.entity';
 import { ArtService } from './art.service';
 import { CreateArtDto } from './dto/create-art.dto';
 import { UpdateArtDto } from './dto/update-art.dto';
@@ -9,29 +10,33 @@ import { UpdateArtDto } from './dto/update-art.dto';
 export class ArtController {
   constructor(private readonly artService: ArtService) {}
 
-  @Post()
-  create(@Body() createArtDto: CreateArtDto) {
-    console.log(createArtDto);
-    return this.artService.create(createArtDto);
+  @Post('create')
+  create(@Body() createArtDto: CreateArtDto) :object {
+
+    const art=this.artService.createArt(createArtDto)
+    
+    return {status: "success", data: art};
+
   }
 
-  @Get()
-  findAll() {
-    return this.artService.findAll();
+  @Get('all')
+  public async getArts() : Promise<Art[]> {
+    return await this.artService.getArts();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.artService.findOne(+id);
+  @Get('/:artId')
+  getArt(@Param('artId') artId: number) {
+    return this.artService.getArt(artId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArtDto: UpdateArtDto) {
-    return this.artService.update(+id, updateArtDto);
+  @Patch('/edit/:artId')
+  update(@Param('artId') artId: number, @Body() updateArtDto: UpdateArtDto) : Promise<Art> {
+
+    return this.artService.editArt(artId,updateArtDto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.artService.remove(+id);
+  @Delete('/delete/:artId')
+  remove(@Param('artId') artId: number) {
+    return this.artService.deleteArt(artId);
   }
 }

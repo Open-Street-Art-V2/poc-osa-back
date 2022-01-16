@@ -9,9 +9,9 @@ import { ArtModule } from './art/art.module';
       "type": "mysql",
       "host": "localhost",
       "port": 3306,
-      "username": "tarek",
+      "username": "root",
       "password": "password",
-      "database": "test",
+      "database": "test_db",
       "autoLoadEntities": true,
       "synchronize": true,
       "migrations": [
@@ -20,8 +20,9 @@ import { ArtModule } from './art/art.module';
       "cli": {
         "migrationsDir": '../src/db/migrations'
       }
-    }
-  ), ArtModule,],
+    }),
+    ArtModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
