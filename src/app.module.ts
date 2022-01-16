@@ -3,15 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArtModule } from './art/art.module';
+import { ConfigModule } from "@nestjs/config"
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [ConfigModule.forRoot({isGlobal: true}),
+    TypeOrmModule.forRoot({
       "type": "mysql",
-      "host": "localhost",
-      "port": 3306,
-      "username": "root",
-      "password": "password",
-      "database": "test_db",
+      "host": process.env.HOST,
+      "port": parseInt(process.env.PORT),
+      "username": process.env.DB_USERNAME,
+      "password": process.env.DB_PASSWORD,
+      "database": process.env.DB_NAME,
       "autoLoadEntities": true,
       "synchronize": true,
       "migrations": [
