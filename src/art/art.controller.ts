@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Art } from './art.entity';
 import { ArtService } from './art.service';
 import { CreateArtDto } from './dto/create-art.dto';
@@ -10,6 +11,7 @@ import { UpdateArtDto } from './dto/update-art.dto';
 export class ArtController {
   constructor(private readonly artService: ArtService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   create(@Body() createArtDto: CreateArtDto) :object {
 

@@ -2,7 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/user.entity';
 import { UsersService } from '../users/users.service';
-
+import * as bcrypt from 'bcrypt';
+import { CreateUserDTO } from 'src/users/dto/create-user-dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -12,7 +13,8 @@ export class AuthService {
 
   async validateUser(email: string, pwd: string): Promise<any> {
     const user = await this.usersService.getUserByLogin(email);
-    if (user.password === pwd) {
+    const isPasswordMatching = await bcrypt.compare(pwd, user.password);
+    if (isPasswordMatching) {
       user.password = '';
       return user;
     }
@@ -27,5 +29,28 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async register(createUserDTO: CreateUserDTO) {
+    const hashedPassword = await bcrypt.hash(createUserDTO.password, 10);
+    try {
+      const createdUser = await this.usersService.createUser({
+        ...createUserDTO,
+        password: hashedPassword,
+      });
+      createdUser.password = undefined;
+      return createdUser;
+    } catch (error) {
+      if (error?.code === 'ER_DUP_ENTRY') {
+        throw new HttpException(
+          'User with that email already exists',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
