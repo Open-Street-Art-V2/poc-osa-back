@@ -1,9 +1,10 @@
 import { UpdateArtDto } from './dto/update-art.dto';
 import { ArtRepository } from './art.repository';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArtDto } from './dto/create-art.dto';
 import { Art } from  './art.entity'
+import { ExistException } from './Exceptions/art-exist.exception';
 
 @Injectable()
 export class ArtService {
@@ -11,6 +12,10 @@ export class ArtService {
 
   public async createArt(createArtDto: CreateArtDto) : Promise<Art> {
 
+    const {title}=createArtDto;
+    if(await this.artRepository.findOne({title})){
+      throw new ExistException("art exist", HttpStatus.FOUND);
+    }
     return await this.artRepository.createArt(createArtDto);
   }
 

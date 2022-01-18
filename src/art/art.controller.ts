@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { error } from 'console';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Art } from './art.entity';
 import { ArtService } from './art.service';
@@ -13,12 +14,9 @@ export class ArtController {
 
   @UseGuards(JwtAuthGuard)
   @Post('create')
-  create(@Body() createArtDto: CreateArtDto) :object {
-
-    const art=this.artService.createArt(createArtDto)
-    
-    return {status: "success", data: art};
-
+  async create(@Body() createArtDto: CreateArtDto) : Promise<any> {
+    const art=await this.artService.createArt(createArtDto);
+    return {data:art};
   }
 
   @Get('all')
