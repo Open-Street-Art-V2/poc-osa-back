@@ -25,8 +25,13 @@ export class ArtController {
   }
 
   @Get('/:artId')
-  getArt(@Param('artId') artId: number) {
-    return this.artService.getArt(artId);
+  public async getArt(@Param('artId') artId: number) {
+    return await this.artService.getArt(artId);
+  }
+
+  @Get('title/:title')
+  public async getArtByTitle(@Param('title') title: string) {
+    return await this.artService.getArtByTitle(title);
   }
 
   @UseGuards(JwtAuthGuard)

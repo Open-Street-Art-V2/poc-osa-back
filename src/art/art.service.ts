@@ -32,6 +32,15 @@ export class ArtService {
     return findArt;
   }
 
+  public async getArtByTitle(title : string): Promise<Art>{
+    
+    const findArt= await this.artRepository.findOne({title});
+    if(!findArt){
+      throw new NotFoundException("Art not found");
+    }
+    return findArt;
+  }
+
   public async editArt(artId: number, updateArtDto: UpdateArtDto) : Promise<Art> {
 
     const editedArt= await this.artRepository.findOne(artId);
