@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   Unique,
@@ -17,4 +18,7 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+  public created_at: Date;
 }
