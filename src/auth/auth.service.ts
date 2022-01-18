@@ -15,8 +15,9 @@ export class AuthService {
     const user = await this.usersService.getUserByLogin(email);
     const isPasswordMatching = await bcrypt.compare(pwd, user.password);
     if (isPasswordMatching) {
-      user.password = '';
-      return user;
+      const {password, ...validatedUser} = user;
+      // user.password = '';
+      return validatedUser;
     }
     throw new HttpException(
       'Wrong credentials provided',
