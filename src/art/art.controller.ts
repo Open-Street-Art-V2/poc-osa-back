@@ -31,12 +31,14 @@ export class ArtController {
     return this.artService.getArt(artId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('/edit/:artId')
   update(@Param('artId') artId: number, @Body() updateArtDto: UpdateArtDto) : Promise<Art> {
 
     return this.artService.editArt(artId,updateArtDto)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('/delete/:artId')
   remove(@Param('artId') artId: number) {
     return this.artService.deleteArt(artId);
