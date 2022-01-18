@@ -24,7 +24,6 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Req() request, @Res({passthrough: true}) res: Response) {
-    console.log(request.user.username, request.user.password + " LOGIN");
     const jwt = await this.authService.login(request.user)
     res.setHeader("Authorization", jwt.access_token);
     return {statusCode: "200", user: request.user};
@@ -40,10 +39,10 @@ export class AuthController {
   @Get("test")
   @UseGuards(JwtAuthGuard)
   async test(@Req() req){
-    const user = req.user as {username: string, sub: number};
+    const user = req.user as {email: string, sub: number};
     return {
         status: "200",
-        message: "Hello " + user.username,
+        message: "Hello " + user.email,
         user: req.user
     }
   }
