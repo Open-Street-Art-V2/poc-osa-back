@@ -4,7 +4,6 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArtDto } from './dto/create-art.dto';
 import { Art } from  './art.entity'
-import { QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class ArtService {
@@ -17,7 +16,7 @@ export class ArtService {
       switch(err.code){
         case "ER_DUP_ENTRY":
           throw new HttpException(
-            'Art with same name already exists',
+            'Art with same title already exists',
             HttpStatus.BAD_REQUEST,
           );
           default:
@@ -37,6 +36,15 @@ export class ArtService {
   public async getArt(artId : number): Promise<Art>{
     
     const findArt= await this.artRepository.findOne(artId);
+    if(!findArt){
+      throw new NotFoundException("Art not found");
+    }
+    return findArt;
+  }
+
+  public async getArtByTitle(title : string): Promise<Art>{
+    
+    const findArt= await this.artRepository.findOne({title});
     if(!findArt){
       throw new NotFoundException("Art not found");
     }

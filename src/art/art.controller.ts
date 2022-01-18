@@ -11,7 +11,7 @@ import { UpdateArtDto } from './dto/update-art.dto';
 export class ArtController {
   constructor(private readonly artService: ArtService) {}
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   create(@Body() createArtDto: CreateArtDto) :object {
     return this.artService.createArt(createArtDto);
@@ -23,8 +23,13 @@ export class ArtController {
   }
 
   @Get('/:artId')
-  getArt(@Param('artId') artId: number) {
-    return this.artService.getArt(artId);
+  public async getArt(@Param('artId') artId: number) {
+    return await this.artService.getArt(artId);
+  }
+
+  @Get('title/:title')
+  public async getArtByTitle(@Param('title') title: string) {
+    return await this.artService.getArtByTitle(title);
   }
 
   @UseGuards(JwtAuthGuard)
