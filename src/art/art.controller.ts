@@ -11,14 +11,10 @@ import { UpdateArtDto } from './dto/update-art.dto';
 export class ArtController {
   constructor(private readonly artService: ArtService) {}
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post('create')
   create(@Body() createArtDto: CreateArtDto) :object {
-
-    const art=this.artService.createArt(createArtDto)
-    
-    return {status: "success", data: art};
-
+    return this.artService.createArt(createArtDto);
   }
 
   @Get('all')

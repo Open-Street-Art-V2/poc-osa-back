@@ -1,17 +1,33 @@
 import { UpdateArtDto } from './dto/update-art.dto';
 import { ArtRepository } from './art.repository';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateArtDto } from './dto/create-art.dto';
 import { Art } from  './art.entity'
+import { QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class ArtService {
   constructor( @InjectRepository(ArtRepository) private artRepository: ArtRepository){}
 
-  public async createArt(createArtDto: CreateArtDto) : Promise<Art> {
-
-    return await this.artRepository.createArt(createArtDto);
+  public async createArt(createArtDto: CreateArtDto) {
+    try {
+      return await this.artRepository.createArt(createArtDto);
+    } catch(err) {
+      switch(err.code){
+        case "ER_DUP_ENTRY":
+          throw new HttpException(
+            'Art with same name already exists',
+            HttpStatus.BAD_REQUEST,
+          );
+          default:
+            throw new HttpException(
+              'Something went wrong',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+      }
+      
+    }
   }
 
   public async getArts() : Promise<Art[]> {
