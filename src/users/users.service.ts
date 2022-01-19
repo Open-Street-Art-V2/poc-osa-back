@@ -1,8 +1,9 @@
 import { CreateUserDTO } from './dto/create-user-dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { UsersRepository } from './users.repository';
+import { PasswordDTO } from './dto/update-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,5 +24,15 @@ export class UsersService {
 
   public async createUser(createUserDTO: CreateUserDTO): Promise<User> {
     return await this.usersRepository.createUser(createUserDTO);
+  }
+
+  public async editPassword(password: PasswordDTO, id: number){
+    const user: User = await this.usersRepository.findOne(id);
+    try {
+      return this.usersRepository.editPassword(password, user);
+    } catch(err) {
+      throw new HttpException("Internal Error", 
+                                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

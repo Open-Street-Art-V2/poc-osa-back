@@ -2,9 +2,9 @@ import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, U
 
 @Entity()
 @Unique(["title"])
-export class Art extends BaseEntity{
+export class Art {
     @PrimaryGeneratedColumn()
-    public id: Number;
+    public id?: Number;
 
     @Column()
     public title: String;
@@ -12,14 +12,14 @@ export class Art extends BaseEntity{
     @Column()
     public artist: String;
     
-    @Column()
+    @Column("decimal", { precision: 10, scale: 5})
     public latitude: Number;
 
-    @Column()
+    @Column("decimal", { precision: 10, scale: 5})
     public longitude: Number;
 
     @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
-    public created_at: Date;
+    public created_at?: Date;
 
 }
 
