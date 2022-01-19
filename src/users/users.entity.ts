@@ -1,3 +1,4 @@
+import { Role } from 'src/auth/roles/role.enum';
 import {
   BaseEntity,
   Column,
@@ -18,6 +19,9 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column("enum", { enum: Role })
+  role: Role;
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
   public created_at: Date;

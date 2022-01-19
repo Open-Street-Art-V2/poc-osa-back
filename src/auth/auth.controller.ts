@@ -7,6 +7,7 @@ import {
   Body,
   Res,
   Get,
+  SetMetadata,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -14,6 +15,9 @@ import { CreateUserDTO } from 'src/users/dto/create-user-dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { Roles } from './roles/decorator/roles.decorator';
+import { RoleGuard } from './roles/guards/role.guard';
+import { Role } from './roles/role.enum';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -26,7 +30,10 @@ export class AuthController {
   async login(@Req() request, @Res({passthrough: true}) res: Response) {
     const jwt = await this.authService.login(request.user)
     res.setHeader("Authorization", jwt.access_token);
-    return {statusCode: "200", user: request.user};
+    return {  
+      statusCode: "200",
+      user: request.user
+    };
     //response.setHeader
     //return this.authService.login(request.user);
   }
@@ -37,11 +44,12 @@ export class AuthController {
   }
 
   @Get("test")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles(Role.USER)
   async test(@Req() req){
-    const user = req.user as {email: string, sub: number};
+    const user = req.user;
     return {
-        status: "200",
+        statusCode: "200",
         message: "Hello " + user.email,
         user: req.user
     }

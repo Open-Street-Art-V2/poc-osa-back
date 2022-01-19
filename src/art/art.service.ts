@@ -17,7 +17,7 @@ export class ArtService {
         case "ER_DUP_ENTRY":
           throw new HttpException(
             'Art with same title already exists',
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.CONFLICT,
           );
           default:
             throw new HttpException(
